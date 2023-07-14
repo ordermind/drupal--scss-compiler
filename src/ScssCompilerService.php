@@ -268,7 +268,7 @@ class ScssCompilerService implements ScssCompilerInterface {
     $plugins = $this->config->get('plugins');
     foreach ($plugins as $plugin) {
       $compiler = \Drupal::service('plugin.manager.scss_compiler')->getInstanceById($plugin);
-      if (method_exists($compiler, 'compileQueue')) {
+      if ((is_object($compiler) || is_string($compiler)) && method_exists($compiler, 'compileQueue')) {
         $compiler->compileQueue();
       }
     }
@@ -382,7 +382,7 @@ class ScssCompilerService implements ScssCompilerInterface {
     if ($this->moduleHandler->moduleExists($namespace)) {
       $type = 'module';
     }
-    $path = @drupal_get_path($type, $namespace);
+    $path = @\Drupal::service('extension.path.resolver')->getPath($type, $namespace);
     if (empty($path)) {
       $path = '';
     }
@@ -468,7 +468,7 @@ class ScssCompilerService implements ScssCompilerInterface {
       if (!empty($content)) {
         $css_folder = dirname($source_file['css_path']);
         $this->fileSystem->prepareDirectory($css_folder, FileSystemInterface::CREATE_DIRECTORY);
-        file_put_contents($source_file['css_path'], trim($content));
+        file_put_contents($source_file['css_path'], trim($content->getCss()));
       }
 
     }

@@ -68,7 +68,7 @@ class LibsassCompiler extends ScssCompilerPluginBase {
     if ($status !== TRUE) {
       throw new \Exception($status);
     }
-    $module_path = DRUPAL_ROOT . '/' . drupal_get_path('module', 'scss_compiler');
+    $module_path = DRUPAL_ROOT . '/' . \Drupal::service('extension.path.resolver')->getPath('module', 'scss_compiler');
     $this->scriptPath = $module_path . '/js/libsass.js';
 
     // Prevent the execution of the script if it contains changes.

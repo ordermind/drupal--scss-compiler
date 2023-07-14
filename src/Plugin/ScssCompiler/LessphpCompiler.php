@@ -110,9 +110,7 @@ class LessphpCompiler extends ScssCompilerPluginBase {
     $variables = $this->scssCompiler->getVariables()->getAll($scss_file['namespace'], $scss_file['source_path']);
     $this->parser->ModifyVars($variables);
 
-    $content = $this->parser->getCss();
-
-    return $content;
+    return $this->parser;
   }
 
   /**

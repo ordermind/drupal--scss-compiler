@@ -39,10 +39,7 @@ class ScssphpCompiler extends ScssCompilerPluginBase {
     }
 
     $this->parser = new Compiler();
-    $this->parser->setFormatter($this->getScssPhpFormatClass($this->scssCompiler->getOption('output_format')));
-    // Disable utf-8 support to increase performance.
-    $this->parser->setEncoding(TRUE);
-
+    $this->parser->setOutputStyle($this->getScssPhpFormatClass($this->scssCompiler->getOption('output_format')));
   }
 
   /**
@@ -102,7 +99,7 @@ class ScssphpCompiler extends ScssCompilerPluginBase {
 
     // Alter variables.
     $variables = $this->scssCompiler->getVariables()->getAll($scss_file['namespace'], $scss_file['source_path']);
-    $this->parser->setVariables($variables);
+    $this->parser->addVariables($variables);
 
     // Add assets path to compiler. By default it's theme/module root folder.
     $this->parser->assetsPath = isset($scss_file['assets_path']) ? $scss_file['assets_path'] : '';
@@ -121,7 +118,7 @@ class ScssphpCompiler extends ScssCompilerPluginBase {
     $this->fileSystem->prepareDirectory($css_folder, FileSystemInterface::CREATE_DIRECTORY);
     $source_content = file_get_contents($scss_file['source_path']);
 
-    return $this->parser->compile($source_content, $scss_file['source_path']);
+    return $this->parser->compileString($source_content, $scss_file['source_path']);
 
   }
 
@@ -183,7 +180,7 @@ class ScssphpCompiler extends ScssCompilerPluginBase {
     if ($this->moduleHandler->moduleExists($namespace)) {
       $type = 'module';
     }
-    $path = @drupal_get_path($type, $namespace);
+    $path = @\Drupal::service('extension.path.resolver')->getPath($type, $namespace);
     if (empty($path)) {
       return NULL;
     }
@@ -210,19 +207,10 @@ class ScssphpCompiler extends ScssCompilerPluginBase {
   private function getScssPhpFormatClass($format) {
     switch ($format) {
       case 'expanded':
-        return '\ScssPhp\ScssPhp\Formatter\Expanded';
-
-      case 'nested':
-        return '\ScssPhp\ScssPhp\Formatter\Nested';
-
-      case 'compact':
-        return '\ScssPhp\ScssPhp\Formatter\Compact';
-
-      case 'crunched':
-        return '\ScssPhp\ScssPhp\Formatter\Crunched';
+        return \ScssPhp\ScssPhp\OutputStyle::EXPANDED;
 
       default:
-        return '\ScssPhp\ScssPhp\Formatter\Compressed';
+        return \ScssPhp\ScssPhp\OutputStyle::COMPRESSED;
     }
   }
 

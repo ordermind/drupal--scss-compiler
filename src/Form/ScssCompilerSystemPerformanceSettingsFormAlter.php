@@ -53,11 +53,8 @@ class ScssCompilerSystemPerformanceSettingsFormAlter {
       '#title' => t('Output format'),
       '#description' => t('Default output format is compressed'),
       '#options' => [
-        'expanded'    => 'Expanded',
-        'nested'      => 'Nested',
-        'compact'     => 'Compact',
-        'compressed'  => 'Compressed',
-        'crunched'    => 'Crunched',
+        \ScssPhp\ScssPhp\OutputStyle::EXPANDED    => t('Expanded'),
+        \ScssPhp\ScssPhp\OutputStyle::COMPRESSED  => t('Compressed'),
       ],
       '#default_value' => $scss_compiler->getOption('output_format'),
     ];
